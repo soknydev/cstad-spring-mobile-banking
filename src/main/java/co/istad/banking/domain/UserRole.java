@@ -1,22 +1,26 @@
 package co.istad.banking.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
-public class RoleAuthory {
-
+@Table(name = "user_roles")
+public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @NotNull
-    private Integer roleId;
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Role roles;
+
 }

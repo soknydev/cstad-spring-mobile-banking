@@ -1,28 +1,24 @@
 package co.istad.banking.domain;
 
+import co.istad.banking.domain.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "user_accounts")
-public class UserAccount {
+@Table(name = "roles_authorities")
+public class RoleAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime createdAt;
-    private Boolean isDeleted;
+
+    @Column(unique = true, nullable = false, length = 20)
+    private Integer authorityId;
 
     @ManyToOne
-    private Account account;
-
-    @ManyToOne
-    private User user;
-
+    private Role roles;
 }

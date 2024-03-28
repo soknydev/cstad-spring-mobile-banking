@@ -18,28 +18,28 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String uuId;
-
     @Column(length = 50)
     private String name;
 
-    @Column(length = 0)
+    @Column(length = 8)
     private String gender;
 
-    @Column(unique = true)
-    private String oneSigneId;
+    @Column(unique = true, nullable = false, length = 15)
+    private String uuid;
 
     @Column(unique = true)
-    private String studentIdCard;
+    private String onSignalId;
+
+    @Column(unique = true)
+    private boolean isStudentCard;
 
     private Boolean isStudent;
     private Boolean isDeleted;
 
-//    @ManyToOne
-//    private Account account;
+    @OneToMany(mappedBy = "user")
+    private List<UserAccount> usersAccounts;
 
-    @OneToMany
-    @JoinTable(name = "user_account")
-    private List<UserAccount> userAccountList = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<UserRole> usersRoles;
+
 }

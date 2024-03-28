@@ -12,28 +12,26 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "accounts")
+@Table(name = "account")
 public class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false, length = 9)
-    private String actNo;
+    private String accountNo;
 
     @Column(unique = true, nullable = false, length = 100)
-    private String actName;
+    private String accountName;
 
     private BigDecimal transferLimit;
 
-    //  account type has a type
     @ManyToOne
     private AccountType accountType;
 
     @OneToMany(mappedBy = "account")
-    private List<UserAccount> userAccounts;
+    private List<UserAccount> usersAccounts;
 
-    @OneToOne
-    private Card card;
+    @OneToMany(mappedBy = "account")
+    private List<Card> card;
 }

@@ -1,32 +1,31 @@
 package co.istad.banking.domain;
 
 import jakarta.persistence.*;
-import lombok.CustomLog;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "card")
-public class Card {
-
+@Table(name = "notifications")
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer cardNo;
-    private Integer cardCvv;
-    @Column(unique = true, nullable = false, length = 9)
-    private Timestamp cardExpiration;
+
+    private String content;
+    private Timestamp transactionAt;
 
     @ManyToOne
-    private Account account;
+    private User sender;
 
     @ManyToOne
-    private CardType cardType;
+    private User receiver;
+
+    @ManyToOne
+    private Transaction transactions;
 }

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -16,7 +17,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "transactions")
 public class Transaction {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +31,8 @@ public class Transaction {
     private String remark;
     private Boolean isPayment;
     private LocalDateTime transactionAt;
-    private Boolean isDelete;
+    private Boolean isDeleted;
 
+    @OneToMany(mappedBy = "transactions")
+    private List<Notification> notifications;
 }
