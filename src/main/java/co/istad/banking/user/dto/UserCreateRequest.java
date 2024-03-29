@@ -30,3 +30,4 @@ public record UserCreateRequest(
         Boolean isStudent
 ) {
 }
+
