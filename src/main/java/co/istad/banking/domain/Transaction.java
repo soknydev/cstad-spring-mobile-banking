@@ -22,17 +22,21 @@ public class Transaction {
     private Long id;
 
     @ManyToOne
-    private Account sender;
+    private Account owner;
 
     @ManyToOne
-    private Account receiver;
+    private Account transferReceiver; // uses when transaction type is TRANSFER
+
+    private String paymentReceiver;
 
     private BigDecimal amount;
-    private String remark;
-    private Boolean isPayment;
-    private LocalDateTime transactionAt;
-    private Boolean isDeleted;
 
-    @OneToMany(mappedBy = "transactions")
-    private List<Notification> notifications;
+    @Column(columnDefinition = "TEXT")
+    private String remark;
+
+    @Column(nullable = false, length = 30)
+    private String transactionType; // transfer and payment
+    private Boolean status; // Pending, Completed, Failed
+    private LocalDateTime transactionAt;
+
 }
