@@ -5,22 +5,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "user_roles")
-public class UserRole {
+@Table(name = "email_verification_tokens")
+public class EmailVerificationToke {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private User user;
+    @Column(nullable = false)
+    private String token;
 
-    @ManyToOne
-    private Role roles;
+    @Column(nullable = false)
+    private LocalDate expiredAt;
+
+    @OneToOne
+    private User user;
 
 }

@@ -20,9 +20,10 @@ public class Role {
     @Column(unique = true, nullable = false, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "roles")
-    private List<RoleAuthority> rolesAuthorities;
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 
-    @OneToMany(mappedBy = "roles")
-    private List<UserRole> usersRoles;
+    @ManyToMany
+    private List<Authority> authorities;
+
 }

@@ -10,14 +10,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "roles_authorities")
-public class RoleAuthority {
+@Table(name = "authorities")
+public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 20)
-    private Integer authorityId;
+    private String name;
 
     @ManyToOne
     private Role roles;
