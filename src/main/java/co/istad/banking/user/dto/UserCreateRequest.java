@@ -1,22 +1,26 @@
 package co.istad.banking.user.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
 public record UserCreateRequest(
         @NotNull
-        @Min(4)
-        @Max(4)
+        @Max(9999)
         @Positive
         Integer pin,
+
         @NotBlank
         @Size(max = 20)
         String phoneNumber,
+
         @NotBlank
         String password,
         @NotBlank
-        @Size(max = 40)
+        String confirmedPassword,
+
+        @Column(length = 50)
         String name,
         @NotBlank
         @Size(max = 6)
@@ -27,7 +31,6 @@ public record UserCreateRequest(
         @Size(max = 20)
         String nationalCardId,
         @Size(max = 20)
-        Boolean isStudent
+        String studentIdCard
 ) {
 }
-
