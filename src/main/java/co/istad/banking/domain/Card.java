@@ -19,14 +19,21 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer cardNo;
-    private Integer cardCvv;
-    @Column(unique = true, nullable = false, length = 9)
-    private Timestamp cardExpiration;
+    @Column(unique = true, nullable = false)
+    private String number;
+
+    @Column(nullable = false)
+    private String cvv;
+    private String holder;
+    private LocalDate issuedAt;
+    private LocalDate expiredAt;
+    private Boolean isDeleted;
 
     @ManyToOne
+    @JoinColumn(name = "type_id")
+    private CardType cardType;
+
+    @OneToOne(mappedBy = "card")
     private Account account;
 
-    @ManyToOne
-    private CardType cardType;
 }
