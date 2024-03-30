@@ -5,6 +5,7 @@ import co.istad.banking.mapper.UserMapper;
 import co.istad.banking.user.dto.UserCreateRequest;
 import co.istad.banking.user.dto.UserDetailsResponse;
 import co.istad.banking.user.dto.UserResponse;
+import co.istad.banking.user.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import co.istad.banking.domain.Role;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,10 +79,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> findUsers() {
         List<User> users = userRepository.findAll();
-        //List<User> users1 = userMapper.toUserDetailsResponse();
         return users.stream()
                 .map(user -> new UserResponse(user.getName(),user.getGender(),user.getPin()))
                 .toList();
+    }
+
+    @Override
+    public void updateUserByUuid(String uuId, UserUpdateRequest userUpdateRequest) {
+        if(userRepository.existsByUuid(uuId)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "This uuId has been not found"
+            );
+        }
+        User userUpdate = userMapper.fromUserUpdateRequest(userUpdateRequest);
+        userRepository.save(userUpdate);
     }
 
 

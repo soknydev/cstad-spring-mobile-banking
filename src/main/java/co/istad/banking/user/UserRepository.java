@@ -9,4 +9,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByPhoneNumber(String phoneNumber);
     Boolean existsByNationalCardId(String nationalCard);
     Boolean existsByStudentIdCard(String studentIdCard);
+    Boolean existsByUuid(String uuId);
 }

@@ -2,6 +2,7 @@ package co.istad.banking.user;
 
 import co.istad.banking.user.dto.UserCreateRequest;
 import co.istad.banking.user.dto.UserResponse;
+import co.istad.banking.user.dto.UserUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,11 @@ public class UserController {
     @GetMapping
     List<UserResponse> findAllUsers(){
         return userService.findUsers();
+    }
+
+    @PutMapping("/{uuid}")
+    void updateUser(@Valid @PathVariable String uuid,@RequestBody UserUpdateRequest userUpdateRequest){
+        userService.updateUserByUuid(uuid, userUpdateRequest);
     }
 
 }
