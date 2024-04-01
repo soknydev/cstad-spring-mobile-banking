@@ -1,33 +1,37 @@
 package co.istad.banking.user;
 
+import co.istad.banking.base.BasedMassage;
 import co.istad.banking.domain.User;
+import co.istad.banking.domain.Role;
 import co.istad.banking.mapper.UserMapper;
-import co.istad.banking.user.dto.UserCreateRequest;
-import co.istad.banking.user.dto.UserDetailsResponse;
-import co.istad.banking.user.dto.UserResponse;
-import co.istad.banking.user.dto.UserUpdateRequest;
+import co.istad.banking.user.dto.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import co.istad.banking.domain.Role;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
 
+
+
     @Override
     public void createNewUser(UserCreateRequest createRequest) {
-        //User user = userMapper.fromUserCreateRequest(createRequest);
-
         if(userRepository.existsByPhoneNumber(createRequest.phoneNumber())){
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -73,27 +77,126 @@ public class UserServiceImpl implements UserService {
                         new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "Error"));
         roles.add(userRole);
+
+        createRequest.roles().forEach(r -> {
+            Role newRole = roleRepository.findByName(r.name())
+                    .orElseThrow(() ->
+                            new ResponseStatusException(
+                                    HttpStatus.NOT_FOUND,
+                                    "Role USER has not been found"
+                            ));
+        });
+        //userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse updateByUuid(String uuid, UserUpdateRequest userUpdateRequest) {
+        // check uuid if exists
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "User has not been found!"));
+
+        log.info("before user: {}", user);
+        userMapper.fromUserUpdateRequest(userUpdateRequest, user);
+        user = userRepository.save(user);
+        return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    public UserResponse updatePasswordByUuid(String uuid, UserChangePwdRequest userChangePwdRequest) {
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(()->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User has not been found!"
+                        ));
+
+        // Check if the new password and confirmed password match
+        if (!userChangePwdRequest.newPwd().equals(userChangePwdRequest.confirmedPwd())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "New password and confirm password do not match!"
+            );
+        }
+
+        user.setPassword(userChangePwdRequest.newPwd());
+
+       user = userRepository.save(user);
+       return userMapper.toUserResponse(user);
+    }
+
+    @Transactional
+    @Override
+    public BasedMassage blockByUuid(String uuid) {
+
+        if (!userRepository.existsByUuid(uuid)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "User has not been found!");
+        }
+
+        userRepository.blockByUuid(uuid);
+
+        return new BasedMassage("User has been blocked");
+    }
+
+    @Override
+    public void deleteUserByUuid(String uuid) {
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User has not been found!"
+                        ));
+        userRepository.delete(user);
+    }
+
+    @Transactional
+    @Override
+    public void disableUserByUuid(String uuid) {
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "User has not been found!"
+                ));
+        user.setIsDeleted(true);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void enableUserByUuid(String uuid) {
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "User has not been found!"
+                ));
+        user.setIsDeleted(false);
         userRepository.save(user);
     }
 
     @Override
-    public List<UserResponse> findUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> new UserResponse(user.getName(),user.getGender(),user.getPin()))
-                .toList();
+    public List<UserDetailsResponse> findUsers() {
+        List<User> user = userRepository.findAll();
+        return userMapper.toUserDetailsResponseList(user);
     }
 
     @Override
-    public void updateUserByUuid(String uuId, UserUpdateRequest userUpdateRequest) {
-        if(userRepository.existsByUuid(uuId)){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "This uuId has been not found"
-            );
-        }
-        User userUpdate = userMapper.fromUserUpdateRequest(userUpdateRequest);
-        userRepository.save(userUpdate);
+    public UserDetailsResponse findByUuid(String uuid) {
+        //check uuid if exists
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "USER has not been found!"));
+        user.getRoles().forEach(role -> log.info("Roles: {}", role));
+        return userMapper.toUserDetailsResponse(user);
+    }
+
+    @Override
+    public Page<UserResponse> findList(int page, int limit) {
+        PageRequest pageRequest = PageRequest.of(page, limit);
+        Page<User> users = userRepository.findAll(pageRequest);
+        return users.map(userMapper::toUserResponse);
     }
 
 

@@ -1,6 +1,8 @@
 package co.istad.banking.init;
 
+import co.istad.banking.domain.AccountType;
 import co.istad.banking.domain.Role;
+import co.istad.banking.features.acoutypes.AccountTypeRepository;
 import co.istad.banking.user.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import java.util.List;
 public class DataInit {
 
     private final RoleRepository roleRepository;
+    private final AccountTypeRepository accountTypeRepository;
 
     @PostConstruct
     void init() {
@@ -35,6 +38,26 @@ public class DataInit {
                     List.of(user, customer, staff, admin)
             );
         }
+    }
+
+    @PostConstruct
+    void initAccount(){
+        if(accountTypeRepository.count() < 1){
+            AccountType savingAccount = new AccountType();
+            savingAccount.setName("Saving Account");
+            savingAccount.setAlias("saving-account");
+            savingAccount.setDescription("Saving Account");
+            savingAccount.setIsDeleted(false);
+
+            AccountType payroll = new AccountType();
+            payroll.setName("Payroll Account");
+            payroll.setAlias("payroll-account");
+            payroll.setDescription("Payroll Account");
+            payroll.setIsDeleted(false);
+
+            accountTypeRepository.saveAll(List.of(savingAccount, payroll));
+        }
+
 
     }
 

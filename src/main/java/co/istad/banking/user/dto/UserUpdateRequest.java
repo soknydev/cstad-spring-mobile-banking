@@ -7,13 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record UserUpdateRequest(
-        @NotNull
-        String uuId,
-
-        @NotNull
-        @Max(9999)
-        @Positive
-        Integer pin,
 
         @Column(length = 50)
         String name,
@@ -21,15 +14,15 @@ public record UserUpdateRequest(
         @NotNull
         LocalDate dob,
 
-        @NotBlank
-        @Size(max = 20)
-        String nationalCardId,
+        String gender,
+        String profileImage,
 
         @Size(max = 20)
-        String studentIdCard,
+        String studentIdCard
 
-        @Column(length = 100)
+        /*@Column(length = 100)
         String cityOrProvince,
+
         @Column(length = 100)
         String khanOrDistrict,
 
@@ -53,6 +46,6 @@ public record UserUpdateRequest(
 
         @Column(length = 100)
         String mainSourceOfIncome,
-        BigDecimal monthlyIncomeRange
+        BigDecimal monthlyIncomeRange*/
 ) {
 }

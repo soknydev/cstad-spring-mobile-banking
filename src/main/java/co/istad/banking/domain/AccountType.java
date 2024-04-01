@@ -20,6 +20,9 @@ public class AccountType {
     @Column(unique = true, nullable = false, length = 100)
     private String name;
 
+    @Column(unique = true, nullable = false, length = 100)
+    private String alias;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
