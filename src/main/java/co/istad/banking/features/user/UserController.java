@@ -1,14 +1,16 @@
-package co.istad.banking.user;
+package co.istad.banking.features.user;
 
 import co.istad.banking.base.BasedMassage;
-import co.istad.banking.user.dto.*;
+import co.istad.banking.features.user.dto.UserChangePwdRequest;
+import co.istad.banking.features.user.dto.UserCreateRequest;
+import co.istad.banking.features.user.dto.UserResponse;
+import co.istad.banking.features.user.dto.UserUpdateRequest;
+import co.istad.banking.features.user.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

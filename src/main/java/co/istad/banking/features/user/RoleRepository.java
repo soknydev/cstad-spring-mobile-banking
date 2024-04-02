@@ -1,4 +1,4 @@
-package co.istad.banking.user;
+package co.istad.banking.features.user;
 
 import co.istad.banking.domain.Role;
 import org.springframework.data.jpa.repository.JpaRepository;

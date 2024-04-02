@@ -1,7 +1,7 @@
 package co.istad.banking.mapper;
 
 import co.istad.banking.domain.User;
-import co.istad.banking.user.dto.*;
+import co.istad.banking.features.user.dto.*;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

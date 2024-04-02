@@ -3,7 +3,7 @@ package co.istad.banking.init;
 import co.istad.banking.domain.AccountType;
 import co.istad.banking.domain.Role;
 import co.istad.banking.features.acoutypes.AccountTypeRepository;
-import co.istad.banking.user.RoleRepository;
+import co.istad.banking.features.user.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

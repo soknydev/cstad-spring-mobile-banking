@@ -1,4 +1,4 @@
-package co.istad.banking.user.dto;
+package co.istad.banking.features.user.dto;
 
 public record RoleNameResponse(
         String name

@@ -1,10 +1,11 @@
-package co.istad.banking.user;
+package co.istad.banking.features.user;
 
 import co.istad.banking.base.BasedMassage;
 import co.istad.banking.domain.User;
 import co.istad.banking.domain.Role;
+import co.istad.banking.features.user.dto.*;
 import co.istad.banking.mapper.UserMapper;
-import co.istad.banking.user.dto.*;
+import co.istad.banking.features.user.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

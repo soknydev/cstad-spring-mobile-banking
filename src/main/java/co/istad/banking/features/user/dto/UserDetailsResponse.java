@@ -1,6 +1,4 @@
-package co.istad.banking.user.dto;
-
-import co.istad.banking.domain.Role;
+package co.istad.banking.features.user.dto;
 
 import java.util.List;
 

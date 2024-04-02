@@ -1,10 +1,8 @@
-package co.istad.banking.user;
+package co.istad.banking.features.user;
 
-import co.istad.banking.domain.User;
 import co.istad.banking.base.BasedMassage;
-import co.istad.banking.user.dto.*;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import co.istad.banking.features.user.dto.*;
+import co.istad.banking.features.user.dto.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

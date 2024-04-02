@@ -1,13 +1,11 @@
-package co.istad.banking.user;
+package co.istad.banking.features.user;
 
 import co.istad.banking.domain.User;
-import co.istad.banking.user.dto.UserDetailsResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
