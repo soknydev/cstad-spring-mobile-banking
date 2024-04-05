@@ -21,7 +21,7 @@ public class UserAccount {
     private Boolean isDeleted;
     private Boolean isBlocked;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Account account;
 
     @ManyToOne

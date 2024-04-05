@@ -1,6 +1,7 @@
 package co.istad.banking.features.user;
 
 import co.istad.banking.base.BasedMassage;
+import co.istad.banking.base.BasedResponse;
 import co.istad.banking.features.user.dto.UserChangePwdRequest;
 import co.istad.banking.features.user.dto.UserCreateRequest;
 import co.istad.banking.features.user.dto.UserResponse;
@@ -65,6 +66,16 @@ public class UserController {
         return userService.findList(page, limit);
 
     }
+
+    // update user image
+    @PutMapping("/{uuid}/profile-image")
+    BasedResponse updateProfileImage(@PathVariable String uuid,
+                                    @RequestBody UpdateProfileImageRequest user){
+        String newProfileImageUri = userService.updateProfileImage(uuid,user.mediaName());
+        return BasedResponse.builder().payload(newProfileImageUri).build();
+    }
+
+
 
 
 }

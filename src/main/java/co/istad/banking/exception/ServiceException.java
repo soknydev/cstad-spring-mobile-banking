@@ -1,5 +1,7 @@
 package co.istad.banking.exception;
 
+import co.istad.banking.base.BasedError;
+import co.istad.banking.base.BasedErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,31 +20,12 @@ public class ServiceException {
 
     @ExceptionHandler(ResponseStatusException.class)
     ResponseEntity<?> handleServiceErrors(ResponseStatusException ex) {
-
-        return ResponseEntity.status(ex.getStatusCode())
-                .body(Map.of("errors", ex.getReason()));
+        BasedError<String> basedError = new BasedError<>();
+        basedError.setCode(ex.getStatusCode().toString());
+        basedError.setDescription(ex.getReason());
+        BasedErrorResponse basedErrorResponse = new BasedErrorResponse();
+        basedErrorResponse.setError(basedError);
+        return ResponseEntity.ok(basedErrorResponse);
     }
-
-
-    /*@ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleValidationErrors(MethodArgumentNotValidException ex) {
-        List<Map<String, Object>> errors = new ArrayList<>();
-        ex.getBindingResult().getFieldErrors()
-                .forEach(fieldError -> {
-                    Map<String, Object> error = new HashMap<>();
-                    error.put("♨️ field ", fieldError.getField());
-                    error.put("♨️ reason ", fieldError.getDefaultMessage());
-                    errors.add(error);
-                });
-        return Map.of("⚠️ errors", errors);
-    }
-
-
-    @ExceptionHandler(ResponseStatusException.class)
-    ResponseEntity<?> handlerServiceErrors(ResponseStatusException e){
-        return ResponseEntity.status(e.getStatusCode())
-                .body(Map.of("errors",e.getMessage()));
-    }*/
 
 }

@@ -44,4 +44,5 @@ public class Account {
     private Card card;
     private Boolean isHidden;
 
+
 }

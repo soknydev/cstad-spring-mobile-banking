@@ -30,5 +30,6 @@ public interface UserService {
 
     Page<UserResponse> findList(int page, int limit);
 
+    String updateProfileImage(String mediaName, String uuid);
 
 }
