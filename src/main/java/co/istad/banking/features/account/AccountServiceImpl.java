@@ -12,6 +12,7 @@ import co.istad.banking.features.user.UserRepository;
 import co.istad.banking.features.user.dto.UserCreateRequest;
 import co.istad.banking.features.user.dto.UserResponse;
 import co.istad.banking.mapper.AccountMapper;
+import co.istad.banking.mapper.AccountTypeMapper;
 import co.istad.banking.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +34,12 @@ public class AccountServiceImpl implements AccountService{
     private final AccountMapper accountMapper;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AccountTypeMapper accountTypeMapper;
+
 
     @Override
     public void creatNewAccount(AccountCreateRequest accountCreateRequest) {
+
         // check account type
         AccountType accountType = accountTypeRepository.findByAlias(accountCreateRequest.accountTypeAlias())
                 .orElseThrow(() ->
@@ -52,7 +56,7 @@ public class AccountServiceImpl implements AccountService{
         Account account = accountMapper.fromAccountCreateRequest(accountCreateRequest);
         account.setAccountType(accountType);
         account.setAccountName(user.getName());
-        account.setAccountNo("19");
+        account.setAccountNo("123456789");
         account.setTransferLimit(BigDecimal.valueOf(5000));
         account.setIsHidden(false);
 
@@ -64,10 +68,10 @@ public class AccountServiceImpl implements AccountService{
         userAccount.setCreatedAt(LocalDateTime.now());
 
         userAccountRepository.save(userAccount);
-
     }
 
-    @Override
+
+    /*@Override
     public AccountResponse findByActNo(String actNo) {
        Account account = accountRepository.findByAccountNo(actNo)
                .orElseThrow(()->
@@ -76,32 +80,35 @@ public class AccountServiceImpl implements AccountService{
                                "actNo has been not found"
                        ));
        return accountMapper.toAccountResponse(account);
-    }
+    }*/
 
-    /*@Override
-    public AccountResponse findByActNo(String actNo) {
-        Account account = accountRepository.existsByAccountNo(actNo).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with ActNo not found. Please try again."));
+    @Override
+    public AccountResponse findByActNo(String accountNo) {
+        /*Account account = accountRepository.findByAccountNo(accountNo).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Account with ActNo not found. Please try again."));*/
 
-        User user = account.getUserAccountList().stream().findFirst()
+        /*User user = account.getUserAccountList().stream().findFirst()
                 .map(UserAccount::getUser)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User associated with Account not found."));
         log.info(account.getUserAccountList().toString());
-        AccountTypeResponse accountTypeResponse = accountMapper.toAccountResponse(account.);
-
+        AccountTypeResponse accountTypeResponse = accountTypeMapper.toAccountTypeResponse(account.getAccountType());
         AccountResponse accountResponse = accountMapper.toAccountResponse(account);
-
-        UserResponse userResponse = userMapper.toUserRes(user);
+        UserResponse userResponse = userMapper.toUserResponse(user);
         accountResponse = new AccountResponse(
-                accountResponse.actNo(),
-                accountResponse.actName(),
+                accountResponse.accountNo(),
+                accountResponse.accountName(),
                 accountResponse.alias(),
                 accountResponse.balance(),
                 accountTypeResponse,
                 userResponse
         );
+        return accountResponse;*/
 
-        return accountResponse;
+        Account account = accountRepository.findByAccountNo(accountNo).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Account with ActNo not found. Please try again."));
+        return accountMapper.toAccountResponse(account);
     }
-    toAccountTypeResponse(account.getAccountType()*/
+
 }

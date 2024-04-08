@@ -1,5 +1,6 @@
 package co.istad.banking.features.user;
 
+
 import co.istad.banking.base.BasedMassage;
 import co.istad.banking.domain.User;
 import co.istad.banking.domain.Role;
@@ -30,44 +31,41 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
 
-
     @Value("${media.base-uri}")
     private String baseUri;
 
-
     @Override
-    public void createNewUser(UserCreateRequest createRequest) {
-        if(userRepository.existsByPhoneNumber(createRequest.phoneNumber())){
+    public void createNewUser(UserCreateRequest userCreateRequest) {
+        if (userRepository.existsByPhoneNumber(userCreateRequest.phoneNumber())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Phone number is already been existed...!"
+                    "Phone number has already been existed!"
             );
         }
 
-        if(userRepository.existsByNationalCardId(createRequest.nationalCardId())){
+        if (userRepository.existsByNationalCardId(userCreateRequest.nationalCardId())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "National is already been existed...!"
+                    "National card ID has already been existed!"
             );
         }
 
-        if(userRepository.existsByStudentIdCard(createRequest.nationalCardId())){
+        if (userRepository.existsByStudentIdCard(userCreateRequest.nationalCardId())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Student Id card is already been existed...!"
+                    "Student card ID has already been existed!"
             );
         }
 
-        if (!createRequest.password()
-                .equals(createRequest.confirmedPassword())) {
+        if (!userCreateRequest.password()
+                .equals(userCreateRequest.confirmedPassword())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Password doesn't match!"
             );
         }
 
-        // DTO pattern (mapstruct ft. lombok)
-        User user = userMapper.fromUserCreateRequest(createRequest);
+        User user = userMapper.fromUserCreateRequest(userCreateRequest);
         user.setUuid(UUID.randomUUID().toString());
 
         user.setProfileImage("avatar.png");
@@ -75,24 +73,25 @@ public class UserServiceImpl implements UserService {
         user.setIsBlocked(false);
         user.setIsDeleted(false);
 
-        // assign default value
         List<Role> roles = new ArrayList<>();
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Error"));
-        roles.add(userRole);
-
-        createRequest.roles().forEach(r -> {
+                                "Role USER has not been found!"));
+        //Create dynamic role from client
+        userCreateRequest.roles().forEach(r-> {
             Role newRole = roleRepository.findByName(r.name())
                     .orElseThrow(() ->
-                            new ResponseStatusException(
-                                    HttpStatus.NOT_FOUND,
-                                    "Role USER has not been found"
-                            ));
+                            new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                    "Role USER has not been found!"));
+            roles.add(newRole);
         });
-        //userRepository.save(user);
+        roles.add(userRole);
+        user.setRoles(roles);
+
+        userRepository.save(user);
     }
+
 
     @Override
     public UserResponse updateByUuid(String uuid, UserUpdateRequest userUpdateRequest) {

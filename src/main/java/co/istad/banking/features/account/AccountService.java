@@ -8,5 +8,5 @@ public interface AccountService {
 
     void creatNewAccount(AccountCreateRequest accountCreateRequest);
 
-    AccountResponse findByActNo(String actNo);
+    AccountResponse findByActNo(String accountNo);
 }
