@@ -5,6 +5,7 @@ import co.istad.banking.domain.AccountType;
 import co.istad.banking.domain.User;
 import co.istad.banking.domain.UserAccount;
 import co.istad.banking.features.account.dto.AccountCreateRequest;
+import co.istad.banking.features.account.dto.AccountRenameRequest;
 import co.istad.banking.features.account.dto.AccountResponse;
 import co.istad.banking.features.acoutypes.AccountTypeRepository;
 import co.istad.banking.features.acoutypes.AccountTypeResponse;
@@ -16,12 +17,16 @@ import co.istad.banking.mapper.AccountTypeMapper;
 import co.istad.banking.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +61,7 @@ public class AccountServiceImpl implements AccountService{
         Account account = accountMapper.fromAccountCreateRequest(accountCreateRequest);
         account.setAccountType(accountType);
         account.setAccountName(user.getName());
-        account.setAccountNo("123456789");
+        account.setAccountNo("1231165416");
         account.setTransferLimit(BigDecimal.valueOf(5000));
         account.setIsHidden(false);
 
@@ -110,5 +115,65 @@ public class AccountServiceImpl implements AccountService{
                         "Account with ActNo not found. Please try again."));
         return accountMapper.toAccountResponse(account);
     }
+
+    @Override
+    public AccountResponse renameByActNo(String accountNo, AccountRenameRequest accountRenameRequest) {
+        // check actNo exist
+        Account account = accountRepository.findByAccountNo(accountNo)
+                .orElseThrow(()->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Account has been not found...!"
+                        ));
+        // check old alias
+        if(account.getAlias() != null &&  account.getAlias().equals(accountRenameRequest.newName()) ){
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "new name the same old name, can not rename, please try again...!"
+            );
+        }
+        account.setAlias(accountRenameRequest.newName());
+        account = accountRepository.save(account);
+        return accountMapper.toAccountResponse(account);
+    }
+
+    @Override
+    public void hideAccount(String accountNo) {
+        if(!accountRepository.existsByAccountNo(accountNo)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Account has been not found...!"
+            );
+        }
+
+        try {
+            accountRepository.hideAccountByActNo(accountNo);
+        }catch (Exception e){
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "something went wrong ...!, please call to me"
+            );
+        }
+    }
+
+    @Override
+    public Page<AccountResponse> findList(int page, int size) {
+        // validate page and size
+        if(page<0){
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Page number must be grater than 0");
+        }
+        if(size<1){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "size number must be grater than or equal 1");
+        }
+        Sort sortByAccountName = Sort.by(Sort.Direction.ASC, "accountName");
+        PageRequest pageRequest = PageRequest.of(page, size, sortByAccountName);
+        Page<Account> accounts = accountRepository.findAll(pageRequest);
+        return accounts.map(accountMapper::toAccountResponse);
+    }
+
 
 }

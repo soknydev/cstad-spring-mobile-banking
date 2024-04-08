@@ -27,7 +27,7 @@ public interface AccountMapper {
 
     @Named("mapUserResponse")
     default UserResponse mapUserResponse(List<UserAccount> userAccountList){
-        return toUserResponse(userAccountList.get(0).getUser());
+        return toUserResponse(userAccountList.getFirst().getUser());
     }
 
     UserResponse toUserResponse(User user);
