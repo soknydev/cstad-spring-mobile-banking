@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "email_verification_tokens")
 public class EmailVerificationToke {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

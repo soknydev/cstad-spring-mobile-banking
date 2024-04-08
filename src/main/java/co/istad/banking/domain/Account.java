@@ -14,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "accounts")
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,7 +43,7 @@ public class Account {
 
     @OneToOne
     private Card card;
-    private Boolean isHidden;
 
+    private Boolean isHidden;
 
 }

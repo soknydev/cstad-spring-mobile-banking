@@ -24,6 +24,7 @@ public class Card {
 
     @Column(nullable = false)
     private String cvv;
+
     private String holder;
     private LocalDate issuedAt;
     private LocalDate expiredAt;

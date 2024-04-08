@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "card_type")
 public class CardType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
