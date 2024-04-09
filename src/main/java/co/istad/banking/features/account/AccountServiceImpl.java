@@ -7,6 +7,7 @@ import co.istad.banking.domain.UserAccount;
 import co.istad.banking.features.account.dto.AccountCreateRequest;
 import co.istad.banking.features.account.dto.AccountRenameRequest;
 import co.istad.banking.features.account.dto.AccountResponse;
+import co.istad.banking.features.account.dto.AccountUpdateTransferLimit;
 import co.istad.banking.features.acoutypes.AccountTypeRepository;
 import co.istad.banking.features.acoutypes.AccountTypeResponse;
 import co.istad.banking.features.user.UserRepository;
@@ -15,6 +16,7 @@ import co.istad.banking.features.user.dto.UserResponse;
 import co.istad.banking.mapper.AccountMapper;
 import co.istad.banking.mapper.AccountTypeMapper;
 import co.istad.banking.mapper.UserMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -175,5 +177,37 @@ public class AccountServiceImpl implements AccountService{
         return accounts.map(accountMapper::toAccountResponse);
     }
 
+    @Override
+    public AccountResponse updateTransferLimit(String accountNO, AccountUpdateTransferLimit updateTransferLimit) {
+        if(!accountRepository.existsByAccountNo(accountNO)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Account has been not found...!"
+            );
+        }
 
+        // if old limit  = new limit
+        Account account = new Account();
+        /*if(account.getTransferLimit().equals(updateTransferLimit.newTransferLimit())){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "new transfer limit the same old limit transfer...!"
+            );
+        }*/
+        account.setTransferLimit(updateTransferLimit.newTransferLimit());
+        account = accountRepository.save(account);
+        return accountMapper.toAccountResponse(account);
+    }
+
+    @Transactional
+    @Override
+    public void updateTransferLimitByActNo(String accountNo, AccountUpdateTransferLimit updateTransferLimit) {
+        if(!accountRepository.existsByAccountNo(accountNo)){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Account has been not found...!"
+            );
+        }
+        accountRepository.updateAccountByAccountNo(accountNo, updateTransferLimit.newTransferLimit());
+    }
 }

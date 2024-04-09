@@ -3,6 +3,7 @@ package co.istad.banking.features.account;
 import co.istad.banking.features.account.dto.AccountCreateRequest;
 import co.istad.banking.features.account.dto.AccountRenameRequest;
 import co.istad.banking.features.account.dto.AccountResponse;
+import co.istad.banking.features.account.dto.AccountUpdateTransferLimit;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,12 @@ public class AccountController {
             @RequestParam(required = false, defaultValue = "25") int size
     ) {
         return accountService.findList(page, size);
+    }
+
+    @PutMapping("{accountNo}/transferLimit")
+    void updateTransferLimitByActNo(@PathVariable String accountNo,
+                                        @RequestBody AccountUpdateTransferLimit updateTransferLimit){
+        accountService.updateTransferLimitByActNo(accountNo, updateTransferLimit);
     }
 
 }
