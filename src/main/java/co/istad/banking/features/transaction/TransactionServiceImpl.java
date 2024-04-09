@@ -4,7 +4,6 @@ package co.istad.banking.features.transaction;
 import co.istad.banking.domain.Account;
 import co.istad.banking.domain.Transaction;
 import co.istad.banking.features.account.AccountRepository;
-import co.istad.banking.features.account.dto.AccountResponse;
 import co.istad.banking.features.transaction.dto.TransactionCreateRequest;
 import co.istad.banking.features.transaction.dto.TransactionResponse;
 import co.istad.banking.mapper.TransactionMapper;
@@ -21,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -76,9 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setTransactionAt(LocalDateTime.now());
         transaction.setStatus(true);
         transaction = transactionRepository.save(transaction);
-
         return transactionMapper.toTransactionResponse(transaction);
-
     }
 
     @Override
@@ -105,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Sort sort1;
-        if(sort.equals("DSC")){
+        if(sort.equalsIgnoreCase("desc")){
             sort1 = Sort.by(Sort.Direction.DESC,"transactionAt");
         }
         else {
@@ -113,7 +111,6 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Sort sortByTransactionAt = sort1;
-        //Sort sortByTransactionAt = Sort.by(Sort.Direction.ASC, "transactionAt");
         PageRequest pageRequest = PageRequest.of(page, size, sortByTransactionAt);
         Page<Transaction> transactions = transactionRepository.findAll(pageRequest);
         return transactions.map(transactionMapper::toTransactionResponse);
