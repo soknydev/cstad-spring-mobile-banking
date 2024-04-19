@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByUuid(String uuid);
     Boolean existsByPassword(String password);
 
+    Optional<User> findByPhoneNumber(String phoneNumber);
+
 
     //@Query(value = "SELECT * FROM users WHERE uuid = ?1", nativeQuery = true)
     @Query("SELECT u FROM User AS u WHERE u.uuid = :uuid")
