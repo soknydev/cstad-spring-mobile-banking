@@ -95,9 +95,8 @@ public class SecurityConfig {
                 .build();
     }
 
-
     // 3.create jwt source  (JSON Web Key Source)
-    @Bean
+    /*@Bean
     JWKSource<SecurityContext> jwkSource(){
         JWKSet jwkSet = new JWKSet();
         return new JWKSource<SecurityContext>() {
@@ -106,6 +105,11 @@ public class SecurityConfig {
                 return jwkSelector.select(jwkSet);
             }
         };
+    }*/
+    @Bean
+    JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {
+        JWKSet jwkSet = new JWKSet(rsaKey);  // Include RSA key in JWK Set
+        return (jwkSelector, context) -> jwkSelector.select(jwkSet);
     }
 
     // 4.Use RSA Public Key for Decoding

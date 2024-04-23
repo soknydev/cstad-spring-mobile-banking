@@ -27,34 +27,33 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public AuthResponse login(LoginRequest loginRequest) {
-        Authentication auth = new UsernamePasswordAuthenticationToken(
+        // Auth with DTO
+        Authentication auth  = new UsernamePasswordAuthenticationToken(
                 loginRequest.phoneNumber(),
                 loginRequest.password()
         );
-
-        daoAuthenticationProvider.authenticate(auth);
-
-        CustomUserDetails userDetails = ((CustomUserDetails) auth.getDetails());
-        log.info(userDetails.getUsername());
-        log.info(userDetails.getPassword());
-        userDetails.getAuthorities()
-                .forEach(grantedAuthority -> System.out.println(grantedAuthority.getAuthority()));
+        auth = daoAuthenticationProvider.authenticate(auth);
+        log.info("Auth :"+auth.getPrincipal());
 
         Instant now = Instant.now();
+        CustomUserDetails customUserDetail = (CustomUserDetails) auth.getPrincipal();
+        log.info(customUserDetail.getUsername());
+        log.info(customUserDetail.getUser().getName());
+        customUserDetail.getAuthorities().forEach(grantedAuthority -> System.out.println(grantedAuthority.getAuthority()));
         JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
-                .id(userDetails.getUsername())
+                .id(customUserDetail.getUsername())
                 .subject("Access Resource")
-                .audience(List.of("WEB", "MOBILE"))
+                .audience(List.of("WEB","MOBILE"))
                 .issuedAt(now)
-                .expiresAt(now.plus(5, ChronoUnit.MINUTES))
-                .issuer(userDetails.getUsername())
+                .expiresAt(now.plus(20, ChronoUnit.SECONDS))
+                .issuer(customUserDetail.getUsername())
                 .build();
         String accessToken = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
-
         return new AuthResponse(
                 "Bearer",
-                    accessToken,
-                ""
+                accessToken,
+                "OK BRO"
         );
+
     }
 }
