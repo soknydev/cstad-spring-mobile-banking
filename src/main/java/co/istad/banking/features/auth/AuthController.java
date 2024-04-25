@@ -1,6 +1,7 @@
 package co.istad.banking.features.auth;
 
 import co.istad.banking.features.auth.dto.AuthResponse;
+import co.istad.banking.features.auth.dto.ChangePasswordRequest;
 import co.istad.banking.features.auth.dto.LoginRequest;
 import co.istad.banking.features.auth.dto.RefreshTokenRequest;
 import jakarta.validation.Valid;
@@ -23,6 +24,11 @@ public class AuthController {
     @PostMapping("/refresh")
     AuthResponse refresh(@Valid @RequestBody RefreshTokenRequest request){
         return authService.refresh(request);
+    }
+
+    @PostMapping("change-password")
+    void changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest){
+
     }
 }
 

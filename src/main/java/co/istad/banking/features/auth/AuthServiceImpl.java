@@ -1,18 +1,24 @@
 package co.istad.banking.features.auth;
 
+import co.istad.banking.domain.User;
 import co.istad.banking.features.auth.dto.AuthResponse;
+import co.istad.banking.features.auth.dto.ChangePasswordRequest;
 import co.istad.banking.features.auth.dto.LoginRequest;
 import co.istad.banking.features.auth.dto.RefreshTokenRequest;
 import co.istad.banking.features.token.TokenService;
+import co.istad.banking.features.user.UserRepository;
 import co.istad.banking.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -20,6 +26,7 @@ import org.springframework.security.oauth2.server.resource.authentication.Bearer
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -35,6 +42,8 @@ public class AuthServiceImpl implements AuthService{
     private final JwtEncoder jwtEncoder;
     private final TokenService tokenService;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private JwtEncoder refreshJwtEncoder;
 
@@ -54,6 +63,42 @@ public class AuthServiceImpl implements AuthService{
         auth = jwtAuthenticationProvider.authenticate(auth);
 
         return tokenService.createToken(auth);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest changePasswordRequest, Jwt jwt) {
+        User user = userRepository.findByPhoneNumber(jwt.getId())
+                .orElseThrow(()->
+                         new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User not found"
+                        )
+                );
+
+        if(!changePasswordRequest.password().equals(changePasswordRequest.confirmedPassword())){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Password is not match"
+            );
+        }
+
+        if(!passwordEncoder.matches(changePasswordRequest.oldPassword(), user.getPassword())){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Old password does not match"
+            );
+        }
+
+        if(passwordEncoder.matches(changePasswordRequest.password(), user.getPassword())){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "New password is not allowed"
+            );
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.password()));
+        userRepository.save(user);
+
     }
 
     @Override
