@@ -2,6 +2,7 @@ package co.istad.banking.features.auth;
 
 import co.istad.banking.features.auth.dto.AuthResponse;
 import co.istad.banking.features.auth.dto.LoginRequest;
+import co.istad.banking.features.auth.dto.RefreshTokenRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -17,6 +18,11 @@ public class AuthController {
     @PostMapping("/login")
     AuthResponse login(@Valid @RequestBody LoginRequest loginRequest){
         return authService.login(loginRequest);
+    }
+
+    @PostMapping("/refresh")
+    AuthResponse refresh(@Valid @RequestBody RefreshTokenRequest request){
+        return authService.refresh(request);
     }
 }
 
