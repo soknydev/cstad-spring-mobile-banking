@@ -27,10 +27,9 @@ public class AuthController {
         return authService.refresh(request);
     }
 
-    @PostMapping("change-password")
+    @PutMapping("change-password")
     void changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest,
                         @AuthenticationPrincipal Jwt jwt){
         authService.changePassword(changePasswordRequest, jwt);
     }
 }
-
