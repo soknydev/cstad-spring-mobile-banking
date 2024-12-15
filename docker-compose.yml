@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  kak_bank:
+    container_name: 'kak_bank'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always       
+    environment:
+      - TZ=Asia/Bangkok
+    ports:
+      - '3550:8080'   #follow you port 
+    volumes:
+      - '/home/istad/kak-bank/images:/home/ite/media'
+# what i want to explain to you is like see 
+/home/ite/media is inside contianer right 
+/home/istad/kak-bank/images on host machine or on server that deploy container 
